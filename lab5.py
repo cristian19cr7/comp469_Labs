@@ -6,6 +6,7 @@ Created on Tue Sep 29 11:11:54 2020
 """
 import math
 import numpy as np
+import lab5
 class Node():
     def __init__(self, data,cost,x,y):
         self.data = data
@@ -44,7 +45,7 @@ def nextInTheFringe(fringeList):
 
     return fringe.pop(closestIndex)
 
-def successor_fcn(currNode, fringeList, visitedList):
+def successor_fcn(currNode, fringeList, visitedList, heuristic):
     
     x = currNode.x
     y = currNode.y
@@ -52,21 +53,30 @@ def successor_fcn(currNode, fringeList, visitedList):
     #left
     if(not outOfboundsCheck(x, y+1) and graph[x][y+1] != 'x'):
         if((x,y+1) not in visitedList):
-            child = Node(graph[x][y+1], manhattan_distance(x, y+1, 4, 6),x,y+1)
+            if(heuristic == '1'):
+                child = Node(graph[x][y+1], eucildean_distance(x, y+1, 4, 6),x,y+1)
+            else:
+                child = Node(graph[x][y+1], manhattan_distance(x, y+1, 4, 6),x,y+1)
             child.parent = currNode
             currNode.children.append(child)
             fringeList.append(child)
     #right
     if(not outOfboundsCheck(x, y-1) and graph[x][y-1] != 'x'):
         if((x,y-1) not in visitedList):
-            child = Node(graph[x][y-1], manhattan_distance(x, y-1, 4, 6),x,y-1)
+            if(heuristic == '1'):
+                child = Node(graph[x][y-1], eucildean_distance(x, y-1, 4, 6),x,y-1)
+            else:
+                child = Node(graph[x][y-1], manhattan_distance(x, y-1, 4, 6),x,y-1)
             child.parent = currNode
             currNode.children.append(child)
             fringeList.append(child)
     #up
     if(not outOfboundsCheck(x-1, y) and graph[x-1][y] != 'x'):
         if((x-1,y) not in visitedList):
-            child = Node(graph[x-1][y], manhattan_distance(x-1, y, 4, 6),x-1,y)
+            if(heuristic == '1'):
+                child = Node(graph[x-1][y], eucildean_distance(x-1, y, 4, 6),x-1,y)
+            else:
+                child = Node(graph[x-1][y], manhattan_distance(x-1, y, 4, 6),x-1,y)
             child.parent = currNode
             currNode.children.append(child)
             fringeList.append(child)
@@ -74,17 +84,20 @@ def successor_fcn(currNode, fringeList, visitedList):
     #down
     if(not outOfboundsCheck(x+1, y) and graph[x+1][y] != 'x'):
         if((x+1,y) not in visitedList):
-            child = Node(graph[x+1][y], manhattan_distance(x+1, y, 4, 6),x+1,y)
+            if(heuristic == '1'):
+                child = Node(graph[x+1][y], eucildean_distance(x+1, y, 4, 6),x+1,y)
+            else:
+                child = Node(graph[x+1][y], manhattan_distance(x+1, y, 4, 6),x+1,y)
             child.parent = currNode
             currNode.children.append(child)
             fringeList.append(child)
             
-def greedy(currentNode):
+def greedy(currentNode, heuristic):
     fringe.append(currentNode)
     nextNode = nextInTheFringe(fringe)
     graphPrint[nextNode.x][nextNode.y] = '*'
     print(np.matrix(graphPrint))
-    successor_fcn(nextNode,fringe,visited)
+    successor_fcn(nextNode,fringe,visited, heuristic)
     #check goal
     if(nextNode.data == 'G'):
             return nextNode
@@ -96,9 +109,9 @@ def greedy(currentNode):
         #check goal
         if(nextNode.data == 'G'):
             return nextNode
-        successor_fcn(nextNode,fringe, visited)
+        successor_fcn(nextNode,fringe, visited, heuristic)
     
-graph = [['S',2,3,'x',1,'x',3],
+graph = [['S',2,3,1,1,'x',3],
          [1,1,'x','x',3,'x',1],
          [3,1,'x',1,1,1,1],
          [1,1,3,4,4,1,2],
@@ -113,8 +126,13 @@ fringe = []
 visited = []
 root = Node('S', 0, 0,0)
 
-endNode = greedy(root)
+method = input("Which method Eucildean (1) or Manhattan (2) => ")
+endNode = greedy(root, method)
 print(visited)
+if(method == '1'):
+    print("ran with Eucildean")
+else:
+    print("ran with Manhattan")
 
 
 
