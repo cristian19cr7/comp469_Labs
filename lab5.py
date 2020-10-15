@@ -6,7 +6,7 @@ Created on Tue Sep 29 11:11:54 2020
 """
 import math
 import numpy as np
-import lab5
+
 class Node():
     def __init__(self, data,cost,x,y):
         self.data = data
